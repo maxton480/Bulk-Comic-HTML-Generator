@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Exact Template Bulk Maker</title>
+<title>Exact Bulk Maker</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 </head>
 <body style="background:#111;color:#fff;font-family:sans-serif;padding:20px">
@@ -13,83 +13,82 @@
 <input id="title" placeholder="Title (IshqParJorNahi)">
 <input id="start" type="number" placeholder="Start Chapter">
 <input id="end" type="number" placeholder="End Chapter">
-
 <button onclick="generate()">Generate ZIP</button>
 
 <script>
 
-const template = `<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>__TITLE__</title>
-  <style>
-    body, html { margin:0; padding:0; background:#000; overflow-x:hidden; height:100vh; }
-    #comic { width:100%; max-width:800px; margin:0 auto; }
-    img { display:block; width:100% !important; height:auto !important; margin:0; padding:0; pointer-events:none; -webkit-touch-callout:none; -webkit-user-drag:none; }
-    .overlay { position:absolute; top:0; left:0; width:100%; height:100%; background:transparent; pointer-events:auto; }
-  </style>
-</head>
-<body>
+const template = '<!DOCTYPE html>\n\
+<html lang="en">\n\
+<head>\n\
+  <meta charset="UTF-8" />\n\
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>\n\
+  <title>__TITLE__</title>\n\
+  <style>\n\
+    body, html { margin:0; padding:0; background:#000; overflow-x:hidden; height:100vh; }\n\
+    #comic { width:100%; max-width:800px; margin:0 auto; }\n\
+    img { display:block; width:100% !important; height:auto !important; margin:0; padding:0; pointer-events:none; -webkit-touch-callout:none; -webkit-user-drag:none; }\n\
+    .overlay { position:absolute; top:0; left:0; width:100%; height:100%; background:transparent; pointer-events:auto; }\n\
+  </style>\n\
+</head>\n\
+<body>\n\
+\n\
+<script>\n\
+  function getCookie(name) {\n\
+    let matches = document.cookie.match(new RegExp("(?:^|; )" + name.replace(/([.$?*|{}()[\\\\]\\\\/+^])/g, \'\\\\$1\') + "=([^;]*)"));\n\
+    return matches ? decodeURIComponent(matches[1]) : "";\n\
+  }\n\
+\n\
+  if (getCookie("site_access") !== "true") {\n\
+    document.documentElement.innerHTML = `\n\
+      <head><title>Access Blocked</title></head>\n\
+      <body style="margin:0; background:#111; color:white; font-family:Arial; text-align:center; padding:50px;">\n\
+        <div style="font-size:24px; background:#900; padding:30px; border-radius:15px; max-width:90%; margin:auto;">\n\
+          ⚠️ Direct Access Blocked<br><br>\n\
+          Shortener solve karke hi site open hogi.<br><br>\n\
+          <a href="gate.html" style="color:#fff; background:#f00; padding:15px; border-radius:10px; text-decoration:none;">Unlock Site</a>\n\
+        </div>\n\
+      </body>`;\n\
+    while (document.body.firstChild) {\n\
+      document.body.removeChild(document.body.firstChild);\n\
+    }\n\
+    throw "";\n\
+  }\n\
+<\/script>\n\
+\n\
+  <div id="comic"></div>\n\
+\n\
+  <script>\n\
+    document.addEventListener("contextmenu", e => e.preventDefault());\n\
+    document.addEventListener("dragstart", e => e.preventDefault());\n\
+\n\
+    // Chapter __CH__ images load\n\
+    const basePath = "https://cdn.jsdelivr.net/gh/maxton480/Comics@main/comics/__SLUG__/ch__CH__/";\n\
+\n\
+    const container = document.getElementById("comic");\n\
+    for (let i = 1; i <= 100; i++) {\n\
+      const num = i.toString().padStart(3, "0");\n\
+      const src = basePath + num + ".webp";\n\
+\n\
+      const div = document.createElement("div");\n\
+      div.style.position = "relative";\n\
+\n\
+      const img = document.createElement("img");\n\
+      img.src = src;\n\
+      img.loading = "lazy";\n\
+      img.onerror = () => div.remove();\n\
+\n\
+      const overlay = document.createElement("div");\n\
+      overlay.className = "overlay";\n\
+\n\
+      div.appendChild(img);\n\
+      div.appendChild(overlay);\n\
+      container.appendChild(div);\n\
+    }\n\
+  <\/script>\n\
+</body>\n\
+</html>';
 
-<script>
-  function getCookie(name) {
-    let matches = document.cookie.match(new RegExp("(?:^|; )" + name.replace(/([.$?*|{}()[\\\\]\\\\/+^])/g, '\\\\$1') + "=([^;]*)"));
-    return matches ? decodeURIComponent(matches[1]) : "";
-  }
-
-  if (getCookie("site_access") !== "true") {
-    document.documentElement.innerHTML = \`
-      <head><title>Access Blocked</title></head>
-      <body style="margin:0; background:#111; color:white; font-family:Arial; text-align:center; padding:50px;">
-        <div style="font-size:24px; background:#900; padding:30px; border-radius:15px; max-width:90%; margin:auto;">
-          ⚠️ Direct Access Blocked<br><br>
-          Shortener solve karke hi site open hogi.<br><br>
-          <a href="gate.html" style="color:#fff; background:#f00; padding:15px; border-radius:10px; text-decoration:none;">Unlock Site</a>
-        </div>
-      </body>\`;
-    while (document.body.firstChild) {
-      document.body.removeChild(document.body.firstChild);
-    }
-    throw "";
-  }
-</script>
-
-  <div id="comic"></div>
-
-  <script>
-    document.addEventListener('contextmenu', e => e.preventDefault());
-    document.addEventListener('dragstart', e => e.preventDefault());
-
-    // Chapter __CH__ images load
-    const basePath = "https://cdn.jsdelivr.net/gh/maxton480/Comics@main/comics/__SLUG__/ch__CH__/";
-
-    const container = document.getElementById('comic');
-    for (let i = 1; i <= 100; i++) {
-      const num = i.toString().padStart(3, '0');
-      const src = basePath + num + '.webp';
-
-      const div = document.createElement('div');
-      div.style.position = 'relative';
-
-      const img = document.createElement('img');
-      img.src = src;
-      img.loading = "lazy";
-      img.onerror = () => div.remove();
-
-      const overlay = document.createElement('div');
-      overlay.className = 'overlay';
-
-      div.appendChild(img);
-      div.appendChild(overlay);
-      container.appendChild(div);
-    }
-  </script>
-</body>
-</html>`;
-
-async function generate(){
+function generate(){
 
 const slug=document.getElementById("slug").value.trim();
 const title=document.getElementById("title").value.trim();
