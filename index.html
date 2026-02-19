@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bulk Comic HTML Generator</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+
+<style>
+*{box-sizing:border-box;}
+body{
+  margin:0;
+  font-family: 'Segoe UI', sans-serif;
+  background: linear-gradient(135deg,#0f172a,#1e293b,#111827);
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  min-height:100vh;
+  color:white;
+}
+
+.container{
+  width:100%;
+  max-width:420px;
+  padding:20px;
+}
+
+.card{
+  backdrop-filter: blur(15px);
+  background: rgba(255,255,255,0.05);
+  border-radius:20px;
+  padding:25px;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.4);
+}
+
+h2{
+  text-align:center;
+  margin-bottom:20px;
+  font-weight:600;
+  letter-spacing:1px;
+}
+
+input{
+  width:100%;
+  padding:14px;
+  margin:12px 0;
+  border-radius:12px;
+  border:none;
+  background: rgba(255,255,255,0.08);
+  color:white;
+  font-size:15px;
+  outline:none;
+}
+
+input::placeholder{
+  color:#ccc;
+}
+
+button{
+  width:100%;
+  padding:15px;
+  border:none;
+  border-radius:15px;
+  font-size:16px;
+  font-weight:bold;
+  background: linear-gradient(135deg,#6366f1,#8b5cf6);
+  color:white;
+  cursor:pointer;
+  margin-top:10px;
+  transition:0.3s ease;
+}
+
+button:active{
+  transform:scale(0.97);
+}
+
+#status{
+  margin-top:15px;
+  text-align:center;
+  font-size:14px;
+  opacity:0.8;
+}
+
+.footer{
+  text-align:center;
+  font-size:12px;
+  margin-top:15px;
+  opacity:0.6;
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+<div class="card">
+
+<h2>Bulk Comic Generator 🚀</h2>
+
+<input type="text" id="comicSlug" placeholder="Comic Folder Slug (ishq-par-jor-nahi)">
+<input type="text" id="comicTitle" placeholder="Comic Display Title (Ishq Par Jor Nahi)">
+<input type="number" id="startChapter" placeholder="Start Chapter (1)">
+<input type="number" id="endChapter" placeholder="End Chapter (10)">
+
+<button onclick="generateHTML()">Generate & Download ZIP</button>
+
+<div id="status"></div>
+
+</div>
+
+<div class="footer">Made for Mobile ⚡</div>
+</div>
+
+<script>
+
+function generateTemplate(slug, title, chapter){
+
+return `<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>${title} - Chapter ${chapter}</title>
+
+<style>
+body, html { margin:0; padding:0; background:#000; overflow-x:hidden; }
+#comic { width:100%; max-width:800px; margin:0 auto; }
+img { display:block; width:100% !important; height:auto !important; pointer-events:none; -webkit-user-drag:none; }
+.overlay { position:absolute; top:0; left:0; width:100%; height:100%; background:transparent; pointer-events:auto; }
+</style>
+</head>
+<body>
+
+<div id="comic"></div>
+
+<script>
+document.addEventListener('contextmenu', e => e.preventDefault());
+document.addEventListener('dragstart', e => e.preventDefault());
+
+const basePath = "https://cdn.jsdelivr.net/gh/USERNAME/REPO@main/comics/${slug}/ch${chapter}/";
+const container = document.getElementById('comic');
+
+for (let i = 1; i <= 100; i++) {
+const num = i.toString().padStart(3, '0');
+const div = document.createElement('div');
+div.style.position = 'relative';
+
+const img = document.createElement('img');
+img.src = basePath + num + '.webp';
+img.loading = "lazy";
+img.onerror = () => div.remove();
+
+const overlay = document.createElement('div');
+overlay.className = 'overlay';
+
+div.appendChild(img);
+div.appendChild(overlay);
+container.appendChild(div);
+}
+<\/script>
+
+</body>
+</html>`;
+}
+
+async function generateHTML(){
+
+const slug = document.getElementById("comicSlug").value.trim();
+const title = document.getElementById("comicTitle").value.trim();
+const start = parseInt(document.getElementById("startChapter").value);
+const end = parseInt(document.getElementById("endChapter").value);
+const status = document.getElementById("status");
+
+if(!slug || !title || !start || !end){
+alert("Fill all fields properly.");
+return;
+}
+
+const zip = new JSZip();
+
+for(let ch = start; ch <= end; ch++){
+const htmlContent = generateTemplate(slug, title, ch);
+zip.file("ch" + ch + ".html", htmlContent);
+}
+
+status.innerText = "Creating ZIP...";
+
+zip.generateAsync({type:"blob"}).then(function(content){
+const link = document.createElement("a");
+link.href = URL.createObjectURL(content);
+link.download = slug + "_chapters.zip";
+link.click();
+status.innerText = "Download Ready ✅";
+});
+
+}
+
+</script>
+
+</body>
+</html>
