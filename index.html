@@ -3,82 +3,90 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Bulk Generator</title>
+<title>Bulk Comic Maker</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<style>
+body{background:#111;color:#fff;font-family:sans-serif;padding:20px;text-align:center}
+input,button{width:100%;padding:12px;margin:8px 0;border-radius:6px;border:none}
+button{background:#e11d48;color:#fff;font-weight:bold}
+</style>
 </head>
-<body style="background:#111;color:#fff;font-family:sans-serif;padding:20px">
+<body>
 
-<h2>Protected Bulk Generator</h2>
+<h2>Protected Bulk Chapter Generator</h2>
 
-<input id="slug" placeholder="Comic Slug"><br><br>
-<input id="title" placeholder="Comic Title"><br><br>
-<input id="start" type="number" placeholder="Start Chapter"><br><br>
-<input id="end" type="number" placeholder="End Chapter"><br><br>
+<input id="slug" placeholder="Comic Slug (ishq-par-jor-nahi)">
+<input id="title" placeholder="Comic Title">
+<input id="start" type="number" placeholder="Start Chapter">
+<input id="end" type="number" placeholder="End Chapter">
 
 <button onclick="generate()">Generate ZIP</button>
 <p id="status"></p>
 
 <script>
 
-function createTemplate(slug,title,ch){
-
+function template(slug,title,ch){
 return `<!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
+<meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>${title}</title>
-<style>
-body, html { margin:0; padding:0; background:#000; overflow-x:hidden; height:100vh; }
-#comic { width:100%; max-width:800px; margin:0 auto; }
-img { display:block; width:100% !important; height:auto !important; pointer-events:none; -webkit-touch-callout:none; -webkit-user-drag:none; }
-.overlay { position:absolute; top:0; left:0; width:100%; height:100%; background:transparent; pointer-events:auto; }
-</style>
-</head>
-<body>
 
 <script>
-function getCookie(name) {
-  let matches = document.cookie.match(new RegExp(
-    "(?:^|; )" + name.replace(/([.$?*|{}()\\\\[\\\\]\\\\\\\\/+^])/g, '\\\\$1') + "=([^;]*)"
-  ));
-  return matches ? decodeURIComponent(matches[1]) : "";
-}
+(function(){
+  function getCookie(name){
+    let matches=document.cookie.match(
+      new RegExp("(?:^|; )"+name.replace(/([.$?*|{}()[\\\\]\\\\/+^])/g,'\\\\$1')+"=([^;]*)")
+    );
+    return matches?decodeURIComponent(matches[1]):"";
+  }
 
-if (getCookie("site_access") !== "true") {
-  document.documentElement.innerHTML =
-  '<head><title>Access Blocked</title></head>' +
-  '<body style="margin:0;background:#111;color:white;font-family:Arial;text-align:center;padding:50px;">' +
-  '<div style="font-size:24px;background:#900;padding:30px;border-radius:15px;max-width:90%;margin:auto;">' +
-  '⚠️ Direct Access Blocked<br><br>' +
-  'Shortener solve karke hi site open hogi.<br><br>' +
-  '<a href="https://gplinks.co/BFmfakvr" style="color:#fff;background:#f00;padding:15px;border-radius:10px;text-decoration:none;">Unlock Site</a>' +
-  '</div></body>';
-  throw new Error("Access blocked");
-}
+  if(getCookie("site_access")!=="true"){
+    document.write(
+      '<body style="margin:0;background:#111;color:white;font-family:Arial;text-align:center;padding:50px;">'+
+      '<div style="font-size:24px;background:#900;padding:30px;border-radius:15px;max-width:90%;margin:auto;">'+
+      '⚠️ Direct Access Blocked<br><br>'+
+      'Shortener solve karke hi site open hogi.<br><br>'+
+      '<a href="gate.html" style="color:#fff;background:#f00;padding:15px;border-radius:10px;text-decoration:none;">Unlock Site</a>'+
+      '</div></body>'
+    );
+    throw new Error("Blocked");
+  }
+})();
 <\/script>
+
+<style>
+body, html { margin:0; padding:0; background:#000; overflow-x:hidden; }
+#comic { width:100%; max-width:800px; margin:0 auto; }
+img { display:block; width:100% !important; height:auto !important; pointer-events:none; -webkit-touch-callout:none; -webkit-user-drag:none; }
+.overlay { position:absolute; top:0; left:0; width:100%; height:100%; background:transparent; }
+</style>
+
+</head>
+<body>
 
 <div id="comic"></div>
 
 <script>
-document.addEventListener('contextmenu', e => e.preventDefault());
-document.addEventListener('dragstart', e => e.preventDefault());
+document.addEventListener('contextmenu',e=>e.preventDefault());
+document.addEventListener('dragstart',e=>e.preventDefault());
 
-const basePath = "https://cdn.jsdelivr.net/gh/maxton480/Comics@main/comics/${slug}/ch${ch}/";
-const container = document.getElementById('comic');
+const basePath="https://cdn.jsdelivr.net/gh/maxton480/Comics@main/comics/${slug}/ch${ch}/";
+const container=document.getElementById('comic');
 
-for (let i = 1; i <= 100; i++) {
-  const num = i.toString().padStart(3, '0');
-  const div = document.createElement('div');
-  div.style.position = 'relative';
+for(let i=1;i<=100;i++){
+  const num=i.toString().padStart(3,'0');
+  const div=document.createElement('div');
+  div.style.position='relative';
 
-  const img = document.createElement('img');
-  img.src = basePath + num + '.webp';
-  img.loading = "lazy";
-  img.onerror = () => div.remove();
+  const img=document.createElement('img');
+  img.src=basePath+num+'.webp';
+  img.loading="lazy";
+  img.onerror=()=>div.remove();
 
-  const overlay = document.createElement('div');
-  overlay.className = 'overlay';
+  const overlay=document.createElement('div');
+  overlay.className='overlay';
 
   div.appendChild(img);
   div.appendChild(overlay);
@@ -101,20 +109,21 @@ if(!slug||!title||!start||!end){alert("Fill all fields");return;}
 const zip=new JSZip();
 
 for(let ch=start;ch<=end;ch++){
-zip.file("ch"+ch+".html",createTemplate(slug,title,ch));
+  zip.file("ch"+ch+".html",template(slug,title,ch));
 }
 
 document.getElementById("status").innerText="Creating ZIP...";
 
 zip.generateAsync({type:"blob"}).then(function(content){
-const link=document.createElement("a");
-link.href=URL.createObjectURL(content);
-link.download=slug+"_chapters.zip";
-link.click();
-document.getElementById("status").innerText="Done ✅";
+  const link=document.createElement("a");
+  link.href=URL.createObjectURL(content);
+  link.download=slug+"_chapters.zip";
+  link.click();
+  document.getElementById("status").innerText="Done ✅";
 });
 }
 
 </script>
+
 </body>
 </html>
