@@ -3,132 +3,98 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Bulk Comic HTML Generator</title>
+<title>Protected Bulk Generator</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 
 <style>
-*{box-sizing:border-box;}
 body{
   margin:0;
-  font-family: 'Segoe UI', sans-serif;
-  background: linear-gradient(135deg,#0f172a,#1e293b,#111827);
+  font-family:sans-serif;
+  background:#111;
   display:flex;
   justify-content:center;
   align-items:center;
   min-height:100vh;
   color:white;
 }
-
-.container{
+.box{
+  width:95%;
+  max-width:400px;
+}
+input,button{
   width:100%;
-  max-width:420px;
-  padding:20px;
-}
-
-.card{
-  backdrop-filter: blur(15px);
-  background: rgba(255,255,255,0.05);
-  border-radius:20px;
-  padding:25px;
-  box-shadow: 0 10px 40px rgba(0,0,0,0.4);
-}
-
-h2{
-  text-align:center;
-  margin-bottom:20px;
-  font-weight:600;
-  letter-spacing:1px;
-}
-
-input{
-  width:100%;
-  padding:14px;
-  margin:12px 0;
-  border-radius:12px;
+  padding:12px;
+  margin:8px 0;
+  border-radius:8px;
   border:none;
-  background: rgba(255,255,255,0.08);
-  color:white;
-  font-size:15px;
-  outline:none;
 }
-
-input::placeholder{
-  color:#ccc;
-}
-
 button{
-  width:100%;
-  padding:15px;
-  border:none;
-  border-radius:15px;
-  font-size:16px;
-  font-weight:bold;
-  background: linear-gradient(135deg,#6366f1,#8b5cf6);
+  background:#e11d48;
   color:white;
-  cursor:pointer;
-  margin-top:10px;
-  transition:0.3s ease;
-}
-
-button:active{
-  transform:scale(0.97);
-}
-
-#status{
-  margin-top:15px;
-  text-align:center;
-  font-size:14px;
-  opacity:0.8;
-}
-
-.footer{
-  text-align:center;
-  font-size:12px;
-  margin-top:15px;
-  opacity:0.6;
+  font-weight:bold;
 }
 </style>
 </head>
 <body>
 
-<div class="container">
-<div class="card">
+<div class="box">
+<h2>Protected Comic Generator</h2>
 
-<h2>Bulk Comic Generator 🚀</h2>
+<input type="text" id="slug" placeholder="Comic Folder Slug">
+<input type="text" id="title" placeholder="Comic Display Title">
+<input type="number" id="start" placeholder="Start Chapter">
+<input type="number" id="end" placeholder="End Chapter">
 
-<input type="text" id="comicSlug" placeholder="Comic Folder Slug (ishq-par-jor-nahi)">
-<input type="text" id="comicTitle" placeholder="Comic Display Title (Ishq Par Jor Nahi)">
-<input type="number" id="startChapter" placeholder="Start Chapter (1)">
-<input type="number" id="endChapter" placeholder="End Chapter (10)">
+<button onclick="generate()">Generate ZIP</button>
 
-<button onclick="generateHTML()">Generate & Download ZIP</button>
-
-<div id="status"></div>
-
-</div>
-
-<div class="footer">Made for Mobile ⚡</div>
+<p id="status"></p>
 </div>
 
 <script>
 
-function generateTemplate(slug, title, chapter){
+function chapterTemplate(slug,title,ch){
 
 return `<!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
+<meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>${title} - Chapter ${chapter}</title>
+<title>${title} - Chapter ${ch}</title>
 
 <style>
-body, html { margin:0; padding:0; background:#000; overflow-x:hidden; }
+body, html { margin:0; padding:0; background:#000; overflow-x:hidden; height:100vh; }
 #comic { width:100%; max-width:800px; margin:0 auto; }
-img { display:block; width:100% !important; height:auto !important; pointer-events:none; -webkit-user-drag:none; }
+img { display:block; width:100% !important; height:auto !important; margin:0; padding:0; pointer-events:none; -webkit-touch-callout:none; -webkit-user-drag:none; }
 .overlay { position:absolute; top:0; left:0; width:100%; height:100%; background:transparent; pointer-events:auto; }
 </style>
 </head>
+
 <body>
+
+<script>
+function getCookie(name) {
+  let matches = document.cookie.match(new RegExp(
+    "(?:^|; )" + name.replace(/([.$?*|{}()\\\\[\\\\]\\\\\\\\/+^])/g, '\\\\$1') + "=([^;]*)"
+  ));
+  return matches ? decodeURIComponent(matches[1]) : "";
+}
+
+if (getCookie("site_access") !== "true") {
+  document.documentElement.innerHTML = \`
+  <head><title>Access Blocked</title></head>
+  <body style="margin:0;background:#111;color:white;font-family:Arial;text-align:center;padding:50px;">
+    <div style="font-size:24px;background:#900;padding:30px;border-radius:15px;max-width:90%;margin:auto;">
+      ⚠️ Direct Access Blocked<br><br>
+      Shortener solve karke hi site open hogi.<br><br>
+      <a href="https://gplinks.co/BFmfakvr"
+      style="color:#fff;background:#f00;padding:15px;border-radius:10px;text-decoration:none;">
+      Unlock Site
+      </a>
+    </div>
+  </body>\`;
+  throw new Error("Access blocked");
+}
+<\/script>
 
 <div id="comic"></div>
 
@@ -136,25 +102,28 @@ img { display:block; width:100% !important; height:auto !important; pointer-even
 document.addEventListener('contextmenu', e => e.preventDefault());
 document.addEventListener('dragstart', e => e.preventDefault());
 
-const basePath = "https://cdn.jsdelivr.net/gh/USERNAME/REPO@main/comics/${slug}/ch${chapter}/";
+const basePath = "https://cdn.jsdelivr.net/gh/maxton480/Comics@main/comics/${slug}/ch${ch}/";
+
 const container = document.getElementById('comic');
 
 for (let i = 1; i <= 100; i++) {
-const num = i.toString().padStart(3, '0');
-const div = document.createElement('div');
-div.style.position = 'relative';
+  const num = i.toString().padStart(3, '0');
+  const src = basePath + num + '.webp';
 
-const img = document.createElement('img');
-img.src = basePath + num + '.webp';
-img.loading = "lazy";
-img.onerror = () => div.remove();
+  const div = document.createElement('div');
+  div.style.position = 'relative';
 
-const overlay = document.createElement('div');
-overlay.className = 'overlay';
+  const img = document.createElement('img');
+  img.src = src;
+  img.loading = "lazy";
+  img.onerror = () => div.remove();
 
-div.appendChild(img);
-div.appendChild(overlay);
-container.appendChild(div);
+  const overlay = document.createElement('div');
+  overlay.className = 'overlay';
+
+  div.appendChild(img);
+  div.appendChild(overlay);
+  container.appendChild(div);
 }
 <\/script>
 
@@ -162,38 +131,32 @@ container.appendChild(div);
 </html>`;
 }
 
-async function generateHTML(){
+async function generate(){
 
-const slug = document.getElementById("comicSlug").value.trim();
-const title = document.getElementById("comicTitle").value.trim();
-const start = parseInt(document.getElementById("startChapter").value);
-const end = parseInt(document.getElementById("endChapter").value);
-const status = document.getElementById("status");
+const slug=document.getElementById("slug").value.trim();
+const title=document.getElementById("title").value.trim();
+const start=parseInt(document.getElementById("start").value);
+const end=parseInt(document.getElementById("end").value);
 
-if(!slug || !title || !start || !end){
-alert("Fill all fields properly.");
-return;
+if(!slug||!title||!start||!end){alert("Fill all fields");return;}
+
+const zip=new JSZip();
+
+for(let ch=start;ch<=end;ch++){
+zip.file("ch"+ch+".html",chapterTemplate(slug,title,ch));
 }
 
-const zip = new JSZip();
-
-for(let ch = start; ch <= end; ch++){
-const htmlContent = generateTemplate(slug, title, ch);
-zip.file("ch" + ch + ".html", htmlContent);
-}
-
-status.innerText = "Creating ZIP...";
+document.getElementById("status").innerText="Creating ZIP...";
 
 zip.generateAsync({type:"blob"}).then(function(content){
-const link = document.createElement("a");
-link.href = URL.createObjectURL(content);
-link.download = slug + "_chapters.zip";
+const link=document.createElement("a");
+link.href=URL.createObjectURL(content);
+link.download=slug+"_protected_chapters.zip";
 link.click();
-status.innerText = "Download Ready ✅";
+document.getElementById("status").innerText="Download Ready ✅";
 });
 
 }
-
 </script>
 
 </body>
