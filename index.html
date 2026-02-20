@@ -2,18 +2,103 @@
 <html>
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Exact Bulk Maker</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<style>
+  body {
+    background: #111;
+    color: #fff;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    margin: 0;
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+    min-height: 100vh;
+  }
+  .container {
+    width: 100%;
+    max-width: 400px;
+    background: #222;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+    height: fit-content;
+    margin-top: 20px;
+  }
+  h2 {
+    text-align: center;
+    margin-top: 0;
+    margin-bottom: 20px;
+    font-size: 22px;
+    color: #fff;
+  }
+  label {
+    font-size: 12px;
+    color: #aaa;
+    margin-bottom: 5px;
+    display: block;
+  }
+  input {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 15px;
+    border-radius: 8px;
+    border: 1px solid #444;
+    background: #111;
+    color: #fff;
+    font-size: 16px;
+    box-sizing: border-box; /* Ensures padding doesn't affect width */
+  }
+  input:focus {
+    outline: none;
+    border-color: #007bff;
+  }
+  .row {
+    display: flex;
+    gap: 10px;
+  }
+  button {
+    width: 100%;
+    padding: 15px;
+    background: #007bff;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    margin-top: 5px;
+  }
+  button:active {
+    background: #0056b3;
+  }
+</style>
 </head>
-<body style="background:#111;color:#fff;font-family:sans-serif;padding:20px">
+<body>
 
-<h2>Exact Output Bulk Generator</h2>
+<div class="container">
+  <h2>Exact Output Bulk Generator</h2>
 
-<input id="slug" placeholder="Slug (ishq-par-jor-nahi)">
-<input id="title" placeholder="Title (IshqParJorNahi)">
-<input id="start" type="number" placeholder="Start Chapter">
-<input id="end" type="number" placeholder="End Chapter">
-<button onclick="generate()">Generate ZIP</button>
+  <label>Slug (Folder Name)</label>
+  <input id="slug" placeholder="e.g. ishq-par-jor-nahi">
+
+  <label>Title (Website Title)</label>
+  <input id="title" placeholder="e.g. IshqParJorNahi">
+
+  <div class="row">
+    <div style="flex:1">
+      <label>Start Chapter</label>
+      <input id="start" type="number" placeholder="1">
+    </div>
+    <div style="flex:1">
+      <label>End Chapter</label>
+      <input id="end" type="number" placeholder="10">
+    </div>
+  </div>
+
+  <button onclick="generate()">Generate ZIP</button>
+</div>
 
 <script>
 
@@ -34,11 +119,11 @@ const template = '<!DOCTYPE html>\n\
 \n\
 <script>\n\
   function getCookie(name) {\n\
-    let matches = document.cookie.match(new RegExp("(?:^|; )" + name.replace(/([.$?*|{}()[\\\\]\\\\/+^])/g, \'\\\\$1\') + "=([^;]*)"));\n\
+    let matches = document.cookie.match(new RegExp(\'(?:^|; )\' + name.replace(/([.$?*|{}()[\\\\$\\\\/+^])/g, \'\\\\$1\') + "=([^;]*)\"));\n\
     return matches ? decodeURIComponent(matches[1]) : "";\n\
   }\n\
 \n\
-  if (getCookie("site_access") !== "true") {\n\
+  if (getCookie(\'site_access\') !== \'true\') {\n\
     document.documentElement.innerHTML = `\n\
       <head><title>Access Blocked</title></head>\n\
       <body style="margin:0; background:#111; color:white; font-family:Arial; text-align:center; padding:50px;">\n\
@@ -56,29 +141,28 @@ const template = '<!DOCTYPE html>\n\
 <\/script>\n\
 \n\
   <div id="comic"></div>\n\
-\n\
   <script>\n\
-    document.addEventListener("contextmenu", e => e.preventDefault());\n\
-    document.addEventListener("dragstart", e => e.preventDefault());\n\
+    document.addEventListener(\'contextmenu\', e => e.preventDefault());\n\
+    document.addEventListener(\'dragstart\', e => e.preventDefault());\n\
 \n\
     // Chapter __CH__ images load\n\
     const basePath = "https://cdn.jsdelivr.net/gh/maxton480/Comics@main/comics/__SLUG__/ch__CH__/";\n\
 \n\
-    const container = document.getElementById("comic");\n\
+    const container = document.getElementById(\'comic\');\n\
     for (let i = 1; i <= 100; i++) {\n\
-      const num = i.toString().padStart(3, "0");\n\
-      const src = basePath + num + ".webp";\n\
+      const num = i.toString().padStart(3, \'0\');\n\
+      const src = basePath + num + \'.webp\';\n\
 \n\
-      const div = document.createElement("div");\n\
-      div.style.position = "relative";\n\
+      const div = document.createElement(\'div\');\n\
+      div.style.position = \'relative\';\n\
 \n\
-      const img = document.createElement("img");\n\
+      const img = document.createElement(\'img\');\n\
       img.src = src;\n\
       img.loading = "lazy";\n\
       img.onerror = () => div.remove();\n\
 \n\
-      const overlay = document.createElement("div");\n\
-      overlay.className = "overlay";\n\
+      const overlay = document.createElement(\'div\');\n\
+      overlay.className = \'overlay\';\n\
 \n\
       div.appendChild(img);\n\
       div.appendChild(overlay);\n\
@@ -95,7 +179,7 @@ const title=document.getElementById("title").value.trim();
 const start=parseInt(document.getElementById("start").value);
 const end=parseInt(document.getElementById("end").value);
 
-if(!slug||!title||!start||!end){alert("Fill all fields");return;}
+if(!slug||!title||!start||!end){alert("Please fill all fields");return;}
 
 const zip=new JSZip();
 
