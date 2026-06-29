@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>New Exact Bulk Maker</title>
+<title>Exact Bulk Maker</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 <style>
   body {
@@ -48,7 +48,7 @@
     background: #111;
     color: #fff;
     font-size: 16px;
-    box-sizing: border-box; /* Ensures padding doesn't affect width */
+    box-sizing: border-box;
   }
   input:focus {
     outline: none;
@@ -130,7 +130,7 @@ const template = '<!DOCTYPE html>\n\
         <div style="font-size:24px; background:#900; padding:30px; border-radius:15px; max-width:90%; margin:auto;">\n\
           ⚠️ Direct Access Blocked<br><br>\n\
           Shortener solve karke hi site open hogi.<br><br>\n\
-          <a href="gate.html" style="color:#fff; background:#f00; padding:15px; border-radius:10px; text-decoration:none;">Unlock Site</a>\n\
+          <a href="https://maxton87667-tech.github.io/Comics/gate.html" style="color:#fff; background:#f00; padding:15px; border-radius:10px; text-decoration:none;">Unlock Site</a>\n\
         </div>\n\
       </body>`;\n\
     while (document.body.firstChild) {\n\
@@ -145,8 +145,8 @@ const template = '<!DOCTYPE html>\n\
     document.addEventListener(\'contextmenu\', e => e.preventDefault());\n\
     document.addEventListener(\'dragstart\', e => e.preventDefault());\n\
 \n\
-    // Chapter __CH__ images load
-    const basePath = "https://cdn.jsdelivr.net/gh/maxton87667-tech/Comics@main/comics/__SLUG__/ch__CH__/";
+    // Chapter __CH__ images load\n\
+    const basePath = "https://cdn.jsdelivr.net/gh/maxton87667-tech/Comics@main/comics/__SLUG__/ch__CH__/";\n\
 \n\
     const container = document.getElementById(\'comic\');\n\
     for (let i = 1; i <= 100; i++) {\n\
